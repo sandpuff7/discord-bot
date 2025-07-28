@@ -204,7 +204,3 @@ client.on('interactionCreate', async interaction => {
   console.log('Bot is starting...');
 })();
 
-  await registerCommands();
-  await client.login(TOKEN);
-  console.log(`Logged in as ${client.user.tag}!`);
-})();
