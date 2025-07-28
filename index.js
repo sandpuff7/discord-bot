@@ -7,6 +7,7 @@ dotenv.config();
 
 const TOKEN = process.env.DISCORD_TOKEN;
 const CLIENT_ID = process.env.CLIENT_ID;
+const GUILD_ID = process.env.GUILD_ID; // <-- New: Guild ID for faster command updates
 const API_BASE = 'https://helldiverstrainingmanual.com/api/v1';
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
@@ -38,12 +39,23 @@ const commands = [
   new SlashCommandBuilder().setName('campaigns').setDescription('Show active campaigns'),
 ].map(command => command.toJSON());
 
+// --- Register Commands (Guild-based for instant updates) ---
 async function registerCommands() {
   try {
     const rest = new REST({ version: '10' }).setToken(TOKEN);
     console.log('Registering slash commands...');
-    await rest.put(Routes.applicationCommands(CLIENT_ID), { body: commands });
-    console.log('Slash commands registered.');
+    if (GUILD_ID) {
+      // Register commands for a single guild (fast updates)
+      await rest.put(
+        Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
+        { body: commands }
+      );
+      console.log(`Slash commands registered for guild ${GUILD_ID}.`);
+    } else {
+      // Fallback: register globally (can take up to 1 hour to update)
+      await rest.put(Routes.applicationCommands(CLIENT_ID), { body: commands });
+      console.log('Slash commands registered globally.');
+    }
   } catch (error) {
     console.error('Error registering commands:', error);
   }
