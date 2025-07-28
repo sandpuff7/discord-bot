@@ -70,6 +70,70 @@ const terminidLoadouts = [
   }
 ];
 
+// --- Automaton loadouts array for /bot-loadout ---
+const automatonLoadouts = [
+  {
+    armour: "SA-25 Steel Trooper",
+    primary: "AR-32 Pacifier",
+    secondary: "CQC-30 Stun Baton",
+    grenades: "G-123 Thermite",
+    stratagems: [
+      "Eagle 500kg Bomb",
+      "Orbital 380mm Barrage",
+      "MG-206 Heavy Machine Gun",
+      "B-100 Portable Hellbomb"
+    ]
+  },
+  {
+    armour: "CE-81 Juggernaut",
+    primary: "PLAS-1 Scorcher",
+    secondary: "P-113 Verdict",
+    grenades: "G-123 Thermite",
+    stratagems: [
+      "Eagle 500kg Bomb",
+      "Orbital Laser",
+      "MG-206 Heavy Machine Gun",
+      "SH-32 Shield Generator Backpack"
+    ]
+  },
+  {
+    armour: "CE-27 Groundbreaker",
+    primary: "AR-23P Liberator Penetrator",
+    secondary: "P-4 Senator",
+    grenades: "G-123 Thermite",
+    stratagems: [
+      "Eagle 500kg Bomb",
+      "Orbital Laser",
+      "AC-8 Autocannon",
+      "Fast Recon Vehicle"
+    ]
+  },
+  {
+    armour: "DP-00 Tactical",
+    primary: "R-2124 Constitution",
+    secondary: "P-4 Senator",
+    grenades: "G-123 Thermites",
+    stratagems: [
+      "Eagle 500kg Bomb",
+      "Eagle Strafing Run",
+      "MG-43 Machine Gun",
+      "LIFT-850 Jump Pack"
+    ]
+  },
+  {
+    armour: "Your next loadout here",
+    primary: "Primary weapon here",
+    secondary: "Secondary weapon here",
+    grenades: "Grenades here",
+    stratagems: [
+      "Stratagem 1",
+      "Stratagem 2",
+      "Stratagem 3",
+      "Stratagem 4"
+    ]
+  }
+];
+
 // --- Slash Commands ---
 const commands = [
   new SlashCommandBuilder().setName('war').setDescription('Show current galactic war status'),
@@ -77,6 +141,7 @@ const commands = [
   new SlashCommandBuilder().setName('dispatch').setDescription('Show latest dispatch message'),
   new SlashCommandBuilder().setName('campaigns').setDescription('Show active campaigns'),
   new SlashCommandBuilder().setName('bug-loadout').setDescription('Get a random Terminid loadout'),
+  new SlashCommandBuilder().setName('bot-loadout').setDescription('Get a random Automaton loadout'),
 ].map(command => command.toJSON());
 
 async function registerCommands() {
@@ -185,6 +250,24 @@ client.on('interactionCreate', async interaction => {
     const embed = new EmbedBuilder()
       .setTitle(`Here is a loadout perfect for destroying Terminids:`)
       .setColor('#3cb371') // Medium Sea Green for Terminids
+      .addFields(
+        { name: 'Armour', value: loadout.armour, inline: true },
+        { name: 'Primary', value: loadout.primary, inline: true },
+        { name: 'Secondary', value: loadout.secondary, inline: true },
+        { name: 'Grenades', value: loadout.grenades, inline: true },
+        { name: 'Stratagems', value: loadout.stratagems.join(', '), inline: false }
+      );
+
+    await interaction.reply({ embeds: [embed] });
+  }
+
+  if (commandName === 'bot-loadout') {
+    const randomNum = Math.floor(Math.random() * automatonLoadouts.length);
+    const loadout = automatonLoadouts[randomNum];
+
+    const embed = new EmbedBuilder()
+      .setTitle(`Here is a loadout perfect for destroying Automatons:`)
+      .setColor('#4682B4') // Steel Blue for Automatons
       .addFields(
         { name: 'Armour', value: loadout.armour, inline: true },
         { name: 'Primary', value: loadout.primary, inline: true },
